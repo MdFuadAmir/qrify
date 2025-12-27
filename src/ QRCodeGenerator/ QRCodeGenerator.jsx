@@ -5,10 +5,21 @@ import { useState } from "react";
 
 const QRCodeGenerator = () => {
   const [text, setText] = useState("");
-  const [bgColor, setBgColor] = useState();
-  const [fgColor, setFgColor] = useState();
+  const [size, setSize] = useState(150);
+  const [bgColor, setBgColor] = useState("#ffffff");
+  const [fgColor, setFgColor] = useState("#000000");
 
-  const downloadQR = () => {};
+  const downloadQR = () => {
+    const canvas = document.getElementById("qr-code");
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    const downloadeLink = document.createElement("a");
+    downloadeLink.href = pngUrl;
+    downloadeLink.download = "qrify.png";
+    downloadeLink.click();
+    document.body.removeChild(downloadeLink);  
+  };
   return (
     <div className=" max-w-md w-full">
       <div className="bg-white/20 p-4 md:p-6 rounded-2xl">
@@ -44,9 +55,21 @@ const QRCodeGenerator = () => {
             <label className="block mb-1 text-white">Background</label>
             <input
               type="color"
-              value={fgColor}
+              value={bgColor}
               onChange={(e) => setBgColor(e.target.value)}
               className="w-full h-10"
+            />
+          </div>
+          {/* size */}
+          <div>
+            <label className="block mb-1">Size</label>
+            <input
+              type="range"
+              min="100"
+              max="200"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="w-full"
             />
           </div>
         </div>
@@ -56,10 +79,12 @@ const QRCodeGenerator = () => {
             <QRCodeCanvas
               id="qr-code"
               value={text}
+              size={size}
               bgColor={bgColor}
               fgColor={fgColor}
               level="H"
               includeMargin
+              className=" rounded-xl shadow-2xl hover:scale-105 duration-300"
             />
           ) : (
             <div className="flex flex-col justify-center  items-center">
@@ -78,6 +103,7 @@ const QRCodeGenerator = () => {
           <FaDownload /> Doqnloade QR code
         </button>
       </div>
+    
     </div>
   );
 };
